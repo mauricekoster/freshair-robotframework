@@ -1,0 +1,112 @@
+*** Settings ***
+Library           Selenium2Library
+
+*** Variables ***
+#${BASE_URL}       http://ng-freshair.herokuapp.com/#
+${BASE_URL}      http://localhost:80/#
+${BROWSER}        chrome
+
+*** Keywords ***
+Setup
+    Open Browser    about:blank    ${BROWSER}
+    ##Go To    about:blank
+    Sleep    2s
+    Maximize Browser Window
+
+Teardown
+    Close All Browsers
+
+Test Teardown
+    Go To    ${BASE_URL}/logout
+
+-- LOGIN PAGE --
+
+Show login page
+    Go To    ${BASE_URL}/login
+    Sleep    2s
+    Page Should Contain    Logon to Fresh
+
+A user with name "${username}" and password "${password}" is entered
+    Enter username    ${username}
+    Enter password    ${password}
+
+Enter username
+    [Arguments]    ${username}
+    Page Should Contain    Logon to Fresh
+    Input Text    username    ${username}
+
+Enter password
+    [Arguments]    ${password}
+    Page Should Contain    Logon to Fresh
+    Input Text    password    ${password}
+
+Submit login credentials
+    Click Button    submit
+    Sleep    2s
+
+Login page is shown
+    Show login page
+
+User submits credentials
+    Submit login credentials
+
+user "${username}" with password "${password}" is logged in
+    Show login page
+    A user with name "${username}" and password "${password}" is entered
+    User submits credentials
+
+-- AVAILABILITY PAGE --
+
+Show availability page
+    Go To    ${BASE_URL}/availabilityQuery.html
+    Page Should Contain    Honest Flight Search
+    Sleep    1s
+
+a new search is started
+    Go To    ${BASE_URL}/search
+    Sleep    3s
+    Page Should Contain    Honest Flight Search
+
+The availability page is shown
+    Page Should Contain    Book / Plan a Flight
+
+departure city is "${city}"
+    Select From List By Value    departure    ${city}
+
+destination city is "${city}"
+    Select From List By Value    destination    ${city}
+
+depature date is ${nr} days after today
+    ${yy}    ${mm}    ${dd}=    Get Time    year,month,day    NOW + ${nr} days
+    Input Text    DEPD    ${yy}/${mm}/${dd}
+
+return date is ${nr} days after today
+    ${yy}    ${mm}    ${dd}=    Get Time    year,month,day    NOW + ${nr} days
+    Input Text    RETD    ${yy}/${mm}/${dd}
+
+query is submitted
+    Click Button    submit
+    Sleep    2s
+
+query result is shown
+    Page Should Contain    Flight Schedule
+
+return trip
+    Select Radio Button    RET    YES
+
+no return trip
+    Select Radio Button    RET    NO
+
+-- GENERAL --
+
+the alert "${message}" is shown
+    ${msg}=    Get Alert Message
+    Should Be Equal As Strings    ${msg}    ${message}
+
+-- DASHBOARD --
+
+The dashboard page is shown
+    Page Should Contain    Gold Members
+    Page Should Contain    Available airports
+
+Bla

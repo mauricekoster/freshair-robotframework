@@ -89,3 +89,16 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# PyCharm
+.idea/
+.iml
+
+**/report.html
+**/log.html
+**/output.xml
+
+report.html
+log.html
+output.xml
+geckodriver.log
